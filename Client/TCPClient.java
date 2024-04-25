@@ -13,7 +13,7 @@ class TCPClient {
     String password;
     String money;
     String deposit;
-    Socket clientSocket;
+    static Socket clientSocket;
     String lastOperation;
     Login login;
     Login2 login2;
@@ -29,7 +29,7 @@ class TCPClient {
         
         try {
             //连接网络
-            clientSocket = new Socket("10.234.129.92", 2525);
+            clientSocket = new Socket("10.242.228.133", 2525);
             lastOperation = "UserId";
             UserId();
             //监视器,while(true)使之一直监视
@@ -48,7 +48,7 @@ class TCPClient {
             BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             messageFromServer = inFromServer.readLine();
             //识别信息,跳入不同函数
-            if (messageFromServer.startsWith("500 AUTH REQUIRED!")) {  //收到了UserId，检查该ID是否在数据库
+            if (messageFromServer.startsWith("500 AUTH REQUIRE")) {  //收到了UserId，检查该ID是否在数据库
                 lastOperation = "PassWord";
                 PassWord();
             
@@ -115,26 +115,31 @@ class TCPClient {
         login2.setVisible(false);
         frame = new JFrame("功能选择");
         frame.setSize(300, 200);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        
         JButton button1 = new JButton("查余额");
         button1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 BALA();
+                
             }
         });
 
         JButton button2 = new JButton("取款");
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 WDARA();
+                
             }
         });
 
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 BYE();
+             
             }
         });
 
@@ -199,21 +204,55 @@ class TCPClient {
         }
     }
 
-    void WDARA(){
-        System.out.println("WDAR");
-        login4 = new Login4();
+
+
+    
+    void WDARA() {
+        System.out.println("WDRA");
+        Login4 login4 = new Login4();
         login4.setVisible(true);
-        try {
-            while(login4.getAward() == null || login4.getAward() == money){
-                System.out.println(login4.getAward());
-                    }
-                    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                    money = login4.getAward();
-                    outToServer.writeBytes("WDAR " + money + '\n');
-        
-        } catch (IOException e) {
-            e.printStackTrace();
+        lastOperation = "WDARA";
+    }
+
+    class Login4 extends JFrame {
+        private JTextField accountField;
+        private String award;
+    
+        public Login4() {
+            setTitle("输入取款金额窗口");
+            setSize(300, 150);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
+            JPanel panel = new JPanel();
+            JLabel accountLabel = new JLabel("金额:");
+            accountField = new JTextField(20);
+            JButton submitButton = new JButton("确定");
+    
+            submitButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    award = accountField.getText();
+                    sendDataToServer(award);
+                }
+            });
+    
+            panel.add(accountLabel);
+            panel.add(accountField);
+            panel.add(submitButton);
+    
+            add(panel);
         }
+    
+        private void sendDataToServer(String money) {
+            try {
+                DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                outToServer.writeBytes("WDRA " + money + '\n');
+                outToServer.flush(); // Flush the output stream
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     void BYE(){
