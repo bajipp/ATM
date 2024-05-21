@@ -29,7 +29,7 @@ class TCPClient {
         
         try {
             //连接网络
-            clientSocket = new Socket("10.242.228.133", 2525);
+            clientSocket = new Socket("10.234.129.87", 2525);
             lastOperation = "UserId";
             UserId();
             //监视器,while(true)使之一直监视
@@ -235,6 +235,7 @@ class TCPClient {
                     sendDataToServer(award);
                 }
             });
+
     
             panel.add(accountLabel);
             panel.add(accountField);

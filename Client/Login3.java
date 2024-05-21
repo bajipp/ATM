@@ -18,7 +18,6 @@ public class Login3 extends JFrame{
         this.setSize(300, 150);
     }
     void showBalance(String imformation){
-        textShow.append(imformation);
-        
+        textShow.setText(imformation);
     }
 }
